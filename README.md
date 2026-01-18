@@ -87,7 +87,13 @@ This allows the agent to discover relevant papers, arXiv links, and citations wh
 
 ---
 
-### 3. Optional: full internet access for automated paper retrieval
+### 3. Optional: MCP scholarly search servers
+
+If you have MCP servers configured for Semantic Scholar, Crossref, and arXiv, the agent can use them alongside web search to improve discovery, metadata accuracy, and relevance filtering. These MCP servers are optional. If any are unavailable, the agent automatically falls back to web search only.
+
+---
+
+### 4. Optional: full internet access for automated paper retrieval
 
 If you want Codex not only to search for papers but also to download PDFs or query external APIs directly, full network access must be enabled in the sandbox.
 
@@ -114,6 +120,7 @@ For basic usage, enabling web search alone is sufficient.
 | Command execution | Codex CLI must allow running shell commands (approval policy must permit local command execution) | Running LaTeX compilation and cleanup |
 | LaTeX installation | `pdflatex` available on PATH (or TinyTeX path configured as per README Notes) | Building PDF outputs |
 | Web search tool | `~/.codex/config.toml` -> `[features]` `web_search_request = true` (or run `codex --search`) | Finding and verifying references |
+| MCP scholarly search servers (optional) | Configure MCP servers for Semantic Scholar, Crossref, and arXiv | Higher-quality paper discovery and metadata; otherwise fallback to web search |
 | Full network access | `~/.codex/config.toml` -> `[sandbox_workspace_write]` `network_access = true` | Downloading and parsing papers automatically |
 
 

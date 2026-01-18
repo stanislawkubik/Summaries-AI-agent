@@ -60,8 +60,49 @@ Writing rules
 - Do not include any domain-specific application section unless requested.
 - Start from `Summaries/SUMMARY_TEMPLATE.tex` and replace all placeholders and inline comments.
 - Use ASCII only unless the source uses non-ASCII already.
-- Before providing any references or citations, first think through the concept and what needs sourcing, then use the `web.run` tool to find every source (all references must come from `web.run`), and open/read those sources to verify all references.
+- Before providing any references or citations, first think through the concept and what needs sourcing, then follow the References workflow below.
 - All cited items must appear in the bibliography.
+
+References workflow
+- Detect MCP availability early in the run by attempting each tool at least once:
+  - Semantic Scholar MCP: search for the exact technique name.
+  - Crossref MCP: lookup or search for one candidate title or DOI.
+  - arXiv MCP: search for the technique name.
+- If all three MCP tool families are callable without error, treat MCP as available for the run and use the MCP + web workflow.
+- If any are not callable or error, treat MCP as unavailable and use the web search only workflow.
+
+MCP + web workflow (minimize irrelevant citations)
+- Query expansion: build 5 to 10 queries including the technique name, common aliases, and tutorial/survey/lecture notes/derivation plus key related terms.
+- Candidate retrieval:
+  - Semantic Scholar MCP: top candidates per query.
+  - Crossref MCP: metadata candidates per query.
+  - arXiv MCP: arXiv candidates per query.
+- Canonicalize and deduplicate:
+  - Prefer DOI as the primary identifier; if no DOI, use arXiv id.
+  - Deduplicate across sources by DOI or arXiv id, otherwise normalized title + first author + year.
+- Verification gate:
+  - Include a paper in the bibliography only if it has a stable identifier (DOI or arXiv id).
+  - Any claim of the form "Paper X uses method Y" must be supported by an abstract that explicitly states it, or full text when available via arXiv MCP.
+  - If verification fails, do not cite as evidence; it may appear only in Further reading if the title is unambiguous and the identifier is stable.
+- Use web search (web.run) as a second view:
+  - For the final short list, use web search (web.run) to confirm title, authors, year, and identifier consistency and to find canonical landing pages.
+  - If web search contradicts MCP metadata, prefer Crossref for DOI metadata; if still inconsistent, drop the paper.
+- Select by buckets, not raw ranking:
+  - Foundational/origin paper: 1.
+  - Modern tutorial or lecture notes: 1 to 2.
+  - Survey or broad reference: 0 to 1.
+  - Applied usage papers: 1 to 3 only if they pass the verification gate.
+  - Implementation documentation: 1.
+- Keep bibliography small: prefer 4 to 8 total citations and avoid extra citations that do not improve learning value.
+
+Web search only workflow (fallback)
+- Use web search (web.run) for all discovery and verification.
+- Do not cite any paper unless it has a stable identifier (DOI or arXiv id).
+- Do not make claims about what a paper does unless the abstract or full text you opened explicitly supports it.
+
+Bibliography discipline
+- Never invent DOI, arXiv id, year, venue, or authors.
+- Prefer to include DOI and/or arXiv links for every entry.
 
 Build and cleanup
 - Compile with `pdflatex` (run twice).
