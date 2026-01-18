@@ -44,3 +44,82 @@ Example: switching to molecular biology (high level)
 - In `Summaries/AGENTS.md`, replace quant-finance usage requirements with biology use cases (e.g., pathway analysis, gene expression, protein interactions).
 - In `Summaries/SUMMARY_TEMPLATE.tex`, rename the finance section to a biology-focused section (e.g., "Usage in Molecular Biology") and update the "Typical applications" bullets.
 - Add a short note in `Summaries/AGENTS.md` about preferred references or databases (e.g., PubMed for literature, UniProt for proteins, KEGG/Reactome for pathways).
+
+## Codex CLI settings requirements
+
+To run this project correctly, Codex CLI must be configured with permissions that allow it to modify the repository and execute the build workflow.
+
+### 1. Required for the core workflow
+
+The following capabilities are mandatory for the agent to function as designed:
+
+- **Sandbox write access to the repository**
+  - Codex must be able to create and modify files inside the current workspace.
+  - This is required to generate new directories under `Summaries/Output/`, create `.tex` files, and update existing summaries.
+
+- **Permission to execute local commands**
+  - The agent needs to run build commands such as:
+    - `pdflatex`
+    - `make build`
+    - `clean_latex.sh`
+  - These are necessary to compile the LaTeX summary into a PDF and clean temporary files.
+
+- **Working LaTeX installation**
+  - `pdflatex` must be available on the system PATH.
+  - If not globally installed, the TinyTeX path specified in the README Notes section must be valid.
+
+Without these permissions, Codex will not be able to produce the final formatted summaries.
+
+---
+
+### 2. Optional but recommended: web search for grounded references
+
+If you want summaries to include real, verifiable academic papers instead of relying only on model knowledge, enable the built in web search tool.
+
+Enable via one of the following:
+
+**Temporary for a single session**
+- Run Codex with:
+  - `codex --search`
+
+**Permanent configuration**
+- Add to `~/.codex/config.toml`:
+
+  [features]
+  web_search_request = true
+
+This allows the agent to discover relevant papers, arXiv links, and citations when generating summaries.
+
+---
+
+### 3. Optional: full internet access for automated paper retrieval
+
+If you want Codex not only to search for papers but also to download PDFs or query external APIs directly, full network access must be enabled in the sandbox.
+
+Add to `~/.codex/config.toml`:
+
+  [sandbox_workspace_write]
+  network_access = true
+
+This is only necessary if you intend to implement workflows where Codex:
+
+- downloads papers automatically
+- extracts text from PDFs
+- stores verified sources inside the repository
+
+For basic usage, enabling web search alone is sufficient.
+
+---
+
+### Summary of requirements
+
+| Capability | Parameter to set | Needed for |
+|---------|-------------------|-----------|
+| Workspace write access | Codex CLI sandbox must allow workspace writes (run in a write enabled sandbox mode) | Creating summary files and directories |
+| Command execution | Codex CLI must allow running shell commands (approval policy must permit local command execution) | Running LaTeX compilation and cleanup |
+| LaTeX installation | `pdflatex` available on PATH (or TinyTeX path configured as per README Notes) | Building PDF outputs |
+| Web search tool | `~/.codex/config.toml` → `[features]` `web_search_request = true` (or run `codex --search`) | Finding real academic papers |
+| Full network access | `~/.codex/config.toml` → `[sandbox_workspace_write]` `network_access = true` | Downloading and parsing papers automatically |
+
+
+If any of these settings are missing, parts of the workflow will fail or require manual intervention.
