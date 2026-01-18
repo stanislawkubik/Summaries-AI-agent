@@ -1,0 +1,13 @@
+# Ignore generated summary outputs and common LaTeX byproducts
+Output/*
+.DS_Store
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+missfont.log
+Makefile
+c
