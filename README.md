@@ -1,6 +1,8 @@
 # Summaries Workflow
 This folder is set up for generating LaTeX summaries of math/statistics concepts relevant to quantitative finance.
 
+* **IMPORTANT:** This project is a work in progress. Suggestions and pull requests are welcome.
+
 Quick start
 1. `cd ./Summaries`
 2. Start Codex.
