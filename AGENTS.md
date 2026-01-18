@@ -27,6 +27,8 @@ Required document layout (keep this exact structure)
 Content requirements
 - Keep the same formatting and tone as the existing summaries.
 - Add quant-finance citations that justify use cases (regime switching, execution, allocation, etc.).
+- Before providing any references or citations, first think through the concept and what needs sourcing, then use the `web.run` tool to find every source (all references must come from `web.run`), and open/read those sources to verify all references.
+- Define all symbols and terms the first time they appear (e.g., define p, n, X, and any acronyms); do not assume the reader knows shorthand.
 - Use ASCII only unless the source uses non-ASCII already.
 - Start from `Summaries/SUMMARY_TEMPLATE.tex` and replace placeholders.
 - Make "General Idea" concrete: what it is, why we care, and when it is used.
