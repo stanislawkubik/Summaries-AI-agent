@@ -1,5 +1,6 @@
 # Ignore generated summary outputs and common LaTeX byproducts
 Output/*
+!Output/Ridge_regression.example
 .DS_Store
 *.aux
 *.log
@@ -10,4 +11,3 @@ Output/*
 *.synctex.gz
 missfont.log
 Makefile
-c

@@ -1,0 +1,264 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+
+% Compact, referenceable key-results map.
+\newenvironment{keyresultmap}{\begin{enumerate}}{\end{enumerate}}
+
+\title{Ridge Regression}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Prerequisite concepts}
+Linear regression and ordinary least squares (OLS), matrix algebra (transpose, inverse, trace), singular value decomposition, convex optimization, and the bias-variance tradeoff.
+
+\section*{What you will learn}
+\begin{itemize}
+  \item Formulate ridge regression as penalized least squares and as a constrained optimization problem.
+  \item Derive the closed-form estimator and interpret shrinkage through a spectral lens.
+  \item Tune the regularization strength and compute ridge solutions efficiently in practice.
+  \item Diagnose under- and over-regularization and interpret ridge coefficients.
+\end{itemize}
+
+\section*{Notation and conventions}
+\subsection*{Notation}
+\begin{itemize}
+  \item $n$ is the number of observations and $p$ is the number of features.
+  \item $X \in \mathbb{R}^{n \times p}$ is the design matrix and $y \in \mathbb{R}^{n}$ is the response vector.
+  \item $\beta \in \mathbb{R}^{p}$ is the coefficient vector and $\hat{\beta}_{\lambda}$ is the ridge estimator.
+  \item $\lambda \ge 0$ is the ridge regularization parameter.
+  \item $I_p$ and $I_n$ are the identity matrices of sizes $p$ and $n$.
+  \item $\varepsilon \in \mathbb{R}^{n}$ is the noise term with $\mathbb{E}[\varepsilon]=0$ and $\mathrm{Var}(\varepsilon)=\sigma^2 I_n$.
+  \item The SVD of $X$ is $X = U S V^T$, where $U \in \mathbb{R}^{n \times p}$ and $V \in \mathbb{R}^{p \times p}$ are orthonormal and $S=\mathrm{diag}(s_1,\dots,s_p)$ with singular values $s_j \ge 0$.
+  \item $A=(X^T X + n\lambda I_p)^{-1}X^T$ is the ridge linear operator mapping $y$ to $\hat{\beta}_{\lambda}$.
+\end{itemize}
+
+\subsection*{Conventions}
+\begin{itemize}
+  \item Data shapes and symbol meanings: $X$ has $n$ rows and $p$ columns, and $y$ has length $n$.
+  \item Centering and standardizing conventions: columns of $X$ and $y$ are centered; features are optionally standardized to unit variance before fitting.
+  \item Intercept treatment: the intercept is handled separately and is not penalized; with centered data, the intercept is zero.
+  \item Objective scaling conventions: we minimize $(1/2n)\lVert y - X\beta \rVert_2^2 + (\lambda/2)\lVert \beta \rVert_2^2$.
+  \item Mapping to common library parameter names (if relevant): in scikit-learn, $\texttt{alpha}$ multiplies $\lVert \beta \rVert_2^2$ in $\lVert y - X\beta \rVert_2^2 + \texttt{alpha}\lVert \beta \rVert_2^2$, so $\texttt{alpha}=n\lambda$ under our scaling.
+\end{itemize}
+
+\section{Problem setup and motivation}
+Ordinary least squares can be unstable when predictors are highly correlated or when $p$ is large relative to $n$, because $X^T X$ becomes ill-conditioned and small perturbations in $y$ lead to large changes in $\hat{\beta}$. Ridge regression addresses this by shrinking coefficients toward zero, which trades a bit of bias for a large reduction in variance and often improves out-of-sample prediction.
+
+\section{General idea}
+Ridge regression modifies least squares by adding an $\ell_2$ penalty on the coefficient vector, producing a unique, well-conditioned solution even when $X^T X$ is nearly singular. The penalty discourages large coefficients, stabilizes estimation along poorly identified directions, and yields a smooth path of solutions as the regularization strength varies.
+
+\section{Intuition}
+\subsection*{Lens 1: Geometric view}
+Least-squares fits correspond to ellipsoidal contours of the residual sum of squares in $\beta$-space. Ridge regression adds a spherical penalty, so the solution becomes the point where a residual contour first touches an $\ell_2$ ball, which typically lies closer to the origin than the OLS solution.
+\textbf{Takeaway:} The ridge solution is the closest low-residual point that also stays inside an $\ell_2$ ball, so coefficients are shrunk toward zero.
+
+\subsection*{Lens 2: Spectral (SVD) view}
+Using the SVD from the notation section, decompose the fit along right-singular vectors. OLS divides by singular values, which amplifies noise when singular values are small. Ridge replaces division by $s_j$ with division by $s_j^2 + n\lambda$, softly damping directions with small $s_j$ and leaving well-identified directions nearly unchanged.
+\textbf{Takeaway:} Ridge regression shrinks most strongly along directions where the data are least informative.
+
+\subsection*{Lens 3: Probabilistic or Bayesian view}
+Assume a Gaussian prior $\beta \sim \mathcal{N}(0, \tau^2 I_p)$ and a Gaussian noise model for $y$. The maximum a posteriori estimate balances the likelihood and prior, yielding the ridge objective with $\lambda$ proportional to $\sigma^2/(n\tau^2)$.
+\textbf{Takeaway:} Ridge regression is equivalent to a Gaussian prior that expresses a belief in small coefficients.
+
+\section{Formal definition}
+Let $y$, $X$, $\beta$, and $\lambda$ be as defined above, with centered data and an unpenalized intercept handled separately. The ridge estimator is defined by
+\begin{equation}
+  \label{eq:core-1}
+  \hat{\beta}_{\lambda} = \arg\min_{\beta \in \mathbb{R}^{p}} \frac{1}{2n}\lVert y - X\beta \rVert_2^2 + \frac{\lambda}{2}\lVert \beta \rVert_2^2.
+\end{equation}
+Equation~\eqref{eq:core-1} states the penalized least-squares objective whose minimizer trades data fit against coefficient size.
+
+\begin{equation}
+  \label{eq:core-2}
+  (X^T X + n\lambda I_p)\hat{\beta}_{\lambda} = X^T y.
+\end{equation}
+Equation~\eqref{eq:core-2} is the normal-equation form that characterizes the unique ridge solution when $\lambda>0$.
+
+\section{Key results map}
+\begin{keyresultmap}
+  \item \textbf{Closed-form ridge estimator}\label{kr:result-1} $\hat{\beta}_{\lambda} = (X^T X + n\lambda I_p)^{-1}X^T y$. (Derived in Appendix~\ref{app:result-1}.)
+  \item \textbf{Constrained-form equivalence}\label{kr:result-2} For each $\lambda>0$ there exists $t>0$ such that $\hat{\beta}_{\lambda}$ solves $\min_{\lVert\beta\rVert_2^2\le t} (1/2n)\lVert y - X\beta \rVert_2^2$. (Derived in Appendix~\ref{app:result-2}.)
+  \item \textbf{Spectral shrinkage}\label{kr:result-3} In the SVD basis, ridge scales components by $s_j^2/(s_j^2 + n\lambda)$ relative to OLS. (Derived in Appendix~\ref{app:result-3}.)
+  \item \textbf{Bias and variance}\label{kr:result-4} With $A$ as defined in the notation section, $\mathbb{E}[\hat{\beta}_{\lambda}]=A X\beta$ and $\mathrm{Var}(\hat{\beta}_{\lambda})=\sigma^2 A A^T$. (Derived in Appendix~\ref{app:result-4}.)
+  \item \textbf{Hat matrix and effective degrees of freedom}\label{kr:result-5} $\hat{y} = H_{\lambda}y$ with $H_{\lambda}=X(X^T X + n\lambda I_p)^{-1}X^T$ and $\mathrm{df}_{\lambda}=\mathrm{tr}(H_{\lambda})$. (Derived in Appendix~\ref{app:result-5}.)
+\end{keyresultmap}
+
+\section{Estimation, tuning, and computation}
+Ridge regression is a convex quadratic problem with a unique solution for $\lambda>0$. In practice, solve the normal equations with a Cholesky factorization when $p$ is moderate, or use QR or SVD for better numerical stability when $X^T X$ is ill-conditioned. For very large or sparse problems, iterative solvers such as conjugate gradient or stochastic gradient methods can be used because the objective is smooth and strongly convex.
+
+Choosing $\lambda$ is typically done with a validation set or cross-validation; generalized cross-validation can approximate leave-one-out error using the hat matrix. Because the penalty depends on feature scaling, standardize predictors (or use penalty factors) before tuning so the selected $\lambda$ has consistent meaning.
+
+\section{Diagnostics and interpretation}
+Interpret ridge coefficients as shrunken effects on the standardized scale; back-transform if you need coefficients in original units. Inspect ridge traces (coefficients versus $\lambda$) to see which predictors stabilize quickly and which remain unstable. Evaluate predictive error across $\lambda$ and check residual patterns to confirm that the linear model remains reasonable. The effective degrees of freedom $\mathrm{tr}(H_{\lambda})$ provides a measure of model complexity that decreases smoothly as $\lambda$ grows.
+
+\section{Common confusions and failure modes}
+\begin{itemize}
+  \item \textbf{Symptom:} Coefficients change dramatically when features are rescaled. \textbf{Cause:} The $\ell_2$ penalty is not scale invariant. \textbf{Fix:} Center and standardize features or use penalty factors.
+  \item \textbf{Symptom:} The intercept is shrunk toward zero. \textbf{Cause:} The intercept was included in the penalty or the data were not centered. \textbf{Fix:} Fit an unpenalized intercept or center $X$ and $y$.
+  \item \textbf{Symptom:} The model underfits with overly small coefficients. \textbf{Cause:} $\lambda$ is too large. \textbf{Fix:} Tune $\lambda$ with cross-validation and inspect the validation curve.
+  \item \textbf{Symptom:} The ridge solution matches OLS but is numerically unstable. \textbf{Cause:} $\lambda$ is effectively zero relative to $X^T X$. \textbf{Fix:} Use a positive $\lambda$ or switch to a robust OLS solver.
+\end{itemize}
+
+\section{Connections and extensions}
+Ridge regression is equivalent to Tikhonov regularization in inverse problems and to a Gaussian-prior Bayesian linear model. It is closely related to principal component regression, but uses soft shrinkage instead of hard truncation. Elastic net blends ridge and lasso penalties, kernel ridge regression replaces $X$ with a kernel matrix, and generalized ridge allows feature-specific penalties through a positive semidefinite penalty matrix.
+
+\section{Further reading}
+\subsection*{Foundational paper}
+\begin{itemize}
+  \item Hoerl and Kennard, ``Ridge Regression: Biased Estimation for Nonorthogonal Problems.'' \cite{hoerl1970}
+\end{itemize}
+
+\subsection*{Best notes or survey}
+\begin{itemize}
+  \item Vinod, ``A Survey of Ridge Regression and Related Techniques for Improvements over Ordinary Least Squares.'' \cite{vinod1978}
+\end{itemize}
+
+\subsection*{Textbook}
+\begin{itemize}
+  \item Hastie, Tibshirani, and Friedman, \emph{The Elements of Statistical Learning} (2nd ed.). \cite{hastie2009}
+\end{itemize}
+
+\subsection*{Implementation docs}
+\begin{itemize}
+  \item scikit-learn documentation for \texttt{Ridge}. \cite{sklearnridge}
+\end{itemize}
+
+\renewcommand{\refname}{Bibliography}
+\begin{thebibliography}{9}
+\bibitem{hoerl1970}
+A. E. Hoerl and R. W. Kennard. ``Ridge Regression: Biased Estimation for Nonorthogonal Problems.'' \emph{Technometrics}, 12(1):55--67, 1970.
+
+\bibitem{vinod1978}
+H. D. Vinod. ``A Survey of Ridge Regression and Related Techniques for Improvements over Ordinary Least Squares.'' \emph{The Review of Economics and Statistics}, 60(1):121--131, February 1978.
+
+\bibitem{hastie2009}
+T. Hastie, R. Tibshirani, and J. Friedman. \emph{The Elements of Statistical Learning: Data Mining, Inference, and Prediction}. 2nd ed., Springer, 2009.
+
+\bibitem{sklearnridge}
+scikit-learn developers. ``Ridge'' documentation, scikit-learn (stable). \url{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html}.
+\end{thebibliography}
+
+\appendix
+\section{Derivations}
+\subsection{Closed-form ridge solution}\label{app:result-1}
+We differentiate the penalized objective to obtain the normal equations.
+\begin{align}
+  f(\beta) &= \frac{1}{2n}(y - X\beta)^T(y - X\beta) + \frac{\lambda}{2}\beta^T\beta.
+\end{align}
+This equation restates the ridge objective so we can compute its gradient explicitly.
+
+\begin{align}
+  \nabla f(\beta) &= \frac{1}{n}(X^T X\beta - X^T y) + \lambda \beta.
+\end{align}
+This gradient expression is needed to find the stationary point of the convex objective.
+
+\begin{align}
+  \nabla f(\beta)=0 &\Rightarrow \frac{1}{n}X^T X\beta + \lambda\beta = \frac{1}{n}X^T y \\
+  &\Rightarrow (X^T X + n\lambda I_p)\beta = X^T y.
+\end{align}
+These equations show the normal equations that characterize the unique minimizer for $\lambda>0$.
+
+\begin{align}
+  \hat{\beta}_{\lambda} &= (X^T X + n\lambda I_p)^{-1}X^T y.
+\end{align}
+This final expression solves the normal equations to give the closed-form ridge estimator.
+
+\subsection{Constrained-form equivalence}\label{app:result-2}
+We show that the penalized and constrained formulations yield the same solution for a suitable constraint level.
+\begin{align}
+  \min_{\beta} \frac{1}{2n}\lVert y - X\beta \rVert_2^2 \quad \text{subject to} \quad \lVert \beta \rVert_2^2 \le t.
+\end{align}
+This constrained problem makes the shrinkage explicit by limiting the $\ell_2$ norm of $\beta$.
+
+\begin{align}
+  \mathcal{L}(\beta,\gamma) &= \frac{1}{2n}\lVert y - X\beta \rVert_2^2 + \frac{\gamma}{2}(\lVert \beta \rVert_2^2 - t).
+\end{align}
+The Lagrangian introduces a multiplier $\gamma \ge 0$ for the norm constraint.
+
+\begin{align}
+  \nabla_{\beta} \mathcal{L}(\beta,\gamma) &= \frac{1}{n}(X^T X\beta - X^T y) + \gamma \beta = 0.
+\end{align}
+The stationarity condition matches ridge normal equations with $\lambda=\gamma$.
+
+\begin{align}
+  (X^T X + n\gamma I_p)\beta &= X^T y.
+\end{align}
+This equation shows that the constrained solution equals the ridge solution for $\lambda=\gamma$ when the constraint is active.
+
+\subsection{Spectral shrinkage in the SVD basis}\label{app:result-3}
+Using the SVD from the notation section, the singular values $s_1,\dots,s_p$ appear on the diagonal of $S$.
+\begin{align}
+  \hat{\beta}_{\lambda} &= (X^T X + n\lambda I_p)^{-1}X^T y \\
+  &= (V S^2 V^T + n\lambda I_p)^{-1} V S U^T y.
+\end{align}
+This step substitutes the SVD into the closed-form solution to expose shrinkage along singular vectors.
+
+\begin{align}
+  (V S^2 V^T + n\lambda I_p)^{-1} &= V (S^2 + n\lambda I_p)^{-1} V^T.
+\end{align}
+This identity uses orthogonality of $V$ to diagonalize the ridge system.
+
+\begin{align}
+  \hat{\beta}_{\lambda} &= V (S^2 + n\lambda I_p)^{-1} S U^T y.
+\end{align}
+This expression gives ridge coefficients in the right-singular-vector basis.
+
+Let $z = U^T y$. The $j$th coefficient in the $V$ basis is
+\begin{align}
+  \hat{\theta}_{\lambda,j} &= \frac{s_j}{s_j^2 + n\lambda} z_j.
+\end{align}
+This formula shows that ridge scales each component of $z$ by a factor that depends on $s_j$.
+
+If $\hat{\theta}_{\mathrm{OLS},j} = z_j/s_j$, then
+\begin{align}
+  \hat{\theta}_{\lambda,j} &= \frac{s_j^2}{s_j^2 + n\lambda}\hat{\theta}_{\mathrm{OLS},j}.
+\end{align}
+This equation makes the shrinkage factor $s_j^2/(s_j^2 + n\lambda)$ explicit.
+
+\subsection{Bias and variance of the ridge estimator}\label{app:result-4}
+Using the notation $A$, the ridge estimator can be written as $\hat{\beta}_{\lambda}=Ay$.
+\begin{align}
+  \mathbb{E}[\hat{\beta}_{\lambda}] &= A\mathbb{E}[y] = A X\beta.
+\end{align}
+This equation computes the expectation under the linear model $y=X\beta+\varepsilon$.
+
+\begin{align}
+  \mathbb{E}[\hat{\beta}_{\lambda}] &= (X^T X + n\lambda I_p)^{-1}X^T X\beta.
+\end{align}
+This form shows the shrinkage bias relative to the true $\beta$.
+
+\begin{align}
+  \mathrm{Var}(\hat{\beta}_{\lambda}) &= A\,\mathrm{Var}(y)\,A^T = \sigma^2 A A^T.
+\end{align}
+This equation uses the noise variance assumption to propagate uncertainty through the linear estimator.
+
+\begin{align}
+  \mathrm{Var}(\hat{\beta}_{\lambda}) &= \sigma^2 (X^T X + n\lambda I_p)^{-1}X^T X (X^T X + n\lambda I_p)^{-1}.
+\end{align}
+This expression gives the covariance matrix of the ridge estimator.
+
+\subsection{Hat matrix and effective degrees of freedom}\label{app:result-5}
+The fitted values are linear in $y$.
+\begin{align}
+  \hat{y} &= X\hat{\beta}_{\lambda} = X(X^T X + n\lambda I_p)^{-1}X^T y.
+\end{align}
+This equation defines the ridge hat matrix $H_{\lambda}$ through $\hat{y}=H_{\lambda}y$.
+
+\begin{align}
+  H_{\lambda} &= X(X^T X + n\lambda I_p)^{-1}X^T.
+\end{align}
+This definition is included to characterize ridge as a linear smoother.
+
+\begin{align}
+  \mathrm{df}_{\lambda} &= \mathrm{tr}(H_{\lambda}).
+\end{align}
+This equation defines the effective degrees of freedom as the trace of the hat matrix.
+
+\end{document}
