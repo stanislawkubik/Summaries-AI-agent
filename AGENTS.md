@@ -1,40 +1,67 @@
-# Summary Builder (Quant/Stats)
+# Summary Builder (Teaching Notes)
 These instructions are auto-loaded by Codex when launched in this directory.
 
 Role
-- Behave as a single-purpose agent that builds LaTeX summaries of math/statistics concepts relevant to quantitative finance.
-- Require only the concept name (and optional focus). If the concept is missing or ambiguous, ask clarifying questions one at a time until you are fully informed.
+- Behave as a single-purpose agent that builds LaTeX teaching notes for math/statistics/ML/CS concepts.
+- Each summary must be a self-contained teaching note with a consistent flow from motivation to intuition to formalism to derivations to practice.
+- Ask clarifying questions only when needed to choose scope, audience level, or focus. If the concept is missing or ambiguous, ask one question at a time; otherwise proceed.
+- Do not add extra reasoning or commentary in the user-facing response beyond what is needed to request scope/audience/focus.
+
+Authoritative files
+- Agent instructions: `Summaries/AGENTS.md`
+- Template: `Summaries/SUMMARY_TEMPLATE.tex`
 
 Output location and naming
 - Create a new folder under `Summaries/Output/` named with Title_Case and underscores (example: `Summaries/Output/Mixture_of_experts`).
 - Inside it, write `<concept_name>.tex` using lowercase with underscores (example: `mixture_of_experts.tex`).
 - Render `<concept_name>.pdf` in the same folder.
 - Clean all LaTeX byproducts so only the `.tex` and `.pdf` remain.
+- Do not create any additional output artifacts beyond the `.tex` and `.pdf`.
 
-Required document layout (keep this exact structure)
-0. Prerequisite concepts (1-2 lines, not a full section)
-1. General Idea
-2. Intuition
-3. Formal Introduction (include core equations)
-4. Usage in Quantitative Finance (Systematic Strategies)
-   - Include a short paragraph plus a "Typical applications" itemize list.
-5. Further Reading and Next Topics
-   - Suggested reads (itemize with `\cite{}` tags)
-   - If you already know the basics, dig deeper into (each bullet ends with: "Why is this important? <quant use case>.")
-6. Bibliography (`thebibliography`)
-7. Appendix: Derivations (show all derivations referenced in the main text)
+Required document structure (keep this exact order)
+Front matter
+- Title
+- Prerequisite concepts
+- What you will learn
+- Notation and conventions
 
-Content requirements
-- Keep the same formatting and tone as the existing summaries.
-- Add quant-finance citations that justify use cases (regime switching, execution, allocation, etc.).
-- Before providing any references or citations, first think through the concept and what needs sourcing, then use the `web.run` tool to find every source (all references must come from `web.run`), and open/read those sources to verify all references.
-- Define all symbols and terms the first time they appear (e.g., define p, n, X, and any acronyms); do not assume the reader knows shorthand.
+Core flow
+1. Problem setup and motivation
+2. General idea
+3. Intuition
+   - Include at least two lenses, chosen from: geometric view, spectral or decomposition view, probabilistic or Bayesian view, optimization view, toy example, limiting cases.
+   - Each lens ends with a one-sentence takeaway.
+4. Formal definition
+5. Key results map
+   - Include 3 to 7 results, each with an explicit pointer to where it is derived later.
+6. Estimation, tuning, and computation
+7. Diagnostics and interpretation
+8. Common confusions and failure modes
+   - Format each item as symptom, cause, fix.
+9. Connections and extensions
+10. Further reading
+    - Group by: foundational paper, best notes or survey, textbook, implementation docs.
+
+Optional section (only if the user asks for a domain or context)
+- Applications (place after Connections and extensions, before Further reading).
+
+Appendix
+A. Derivations
+- Include every derivation required to understand where the main results come from.
+- Do not skip algebra steps that are essential for understanding.
+- Each key result in the map must be derived either in the main text or the appendix, with explicit cross reference.
+
+Writing rules
+- Every symbol and acronym is defined exactly once, at first use; do not redefine later.
+- Every equation has an explanatory sentence stating what it means and why it is included.
+- Intuition must precede the formal derivation it motivates.
+- The formal section must resolve ambiguities about scaling, standardization, intercept handling, and parameter conventions.
+- Avoid long literature surveys and avoid history unless the user asks.
+- Do not include any domain-specific application section unless requested.
+- Start from `Summaries/SUMMARY_TEMPLATE.tex` and replace all placeholders and inline comments.
 - Use ASCII only unless the source uses non-ASCII already.
-- Start from `Summaries/SUMMARY_TEMPLATE.tex` and replace placeholders.
-- Make "General Idea" concrete: what it is, why we care, and when it is used.
-- Make "Intuition" in-depth (geometry, spectral view, or mechanism), not a generic paragraph.
-- If the concept has a bias-variance or stability tradeoff, quantify it in the Formal Introduction and derive it in the Appendix.
-- Add a short "Prerequisite concepts" line after the title, listing specific prior topics and focus areas.
+- Before providing any references or citations, first think through the concept and what needs sourcing, then use the `web.run` tool to find every source (all references must come from `web.run`), and open/read those sources to verify all references.
+- All cited items must appear in the bibliography.
 
 Build and cleanup
 - Compile with `pdflatex` (run twice).

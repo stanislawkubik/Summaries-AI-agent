@@ -1,5 +1,5 @@
 # Summaries Workflow
-This folder is set up for generating LaTeX summaries of math/statistics concepts relevant to quantitative finance.
+This folder is set up for generating LaTeX teaching notes for technical concepts (math, statistics, ML, CS).
 
 * **IMPORTANT:** This project is a work in progress. Suggestions and pull requests are welcome.
 
@@ -7,15 +7,15 @@ Quick start
 1. `cd ./Summaries`
 2. Start Codex.
 3. Ask for a concept, for example:
-   - "Create a summary for Hidden Markov Models with a focus on regime detection."
-   - "Summarize stochastic volatility models for systematic strategies."
+   - "Create a summary for Hidden Markov Models at an advanced undergraduate level."
+   - "Summarize stochastic gradient descent with a focus on optimization intuition."
 
 What the agent does
-- Asks clarifying questions one at a time until the concept and focus are clear.
+- Asks clarifying questions only when needed to choose scope, audience level, or focus.
 - Creates a new concept folder under `Summaries/Output/` with Title_Case naming.
-- Uses `SUMMARY_TEMPLATE.tex` to keep the exact section layout.
-- Writes a concrete "General Idea" (what, why, when) and an in-depth "Intuition" section.
-- Adds a short "Prerequisite concepts" line after the title.
+- Uses `SUMMARY_TEMPLATE.tex` to keep the exact section layout and front matter.
+- Writes intuition before formalism and includes a key results map with derivation pointers.
+- Includes an Applications section only if the user requests a domain or context.
 - Renders a PDF and removes all LaTeX byproducts, leaving only `.tex` and `.pdf`.
 
 File conventions
@@ -35,15 +35,10 @@ Notes
   - `make clean DIR=Output/<Concept_Name>`
 
 Adapting the agent (high level)
-- Change the domain rules and tone in `Summaries/AGENTS.md`.
-- Update the layout and placeholders in `Summaries/SUMMARY_TEMPLATE.tex`.
-- Add or remove sections to match your target field.
+- Change structure and writing rules in `Summaries/AGENTS.md`.
+- Update layout and placeholders in `Summaries/SUMMARY_TEMPLATE.tex`.
+- If you want domain-specific Applications content, request it in your prompt; the template includes an optional Applications section.
 - If you want data/tool integrations, document them in `Summaries/AGENTS.md` and call them out in your prompts.
-
-Example: switching to molecular biology (high level)
-- In `Summaries/AGENTS.md`, replace quant-finance usage requirements with biology use cases (e.g., pathway analysis, gene expression, protein interactions).
-- In `Summaries/SUMMARY_TEMPLATE.tex`, rename the finance section to a biology-focused section (e.g., "Usage in Molecular Biology") and update the "Typical applications" bullets.
-- Add a short note in `Summaries/AGENTS.md` about preferred references or databases (e.g., PubMed for literature, UniProt for proteins, KEGG/Reactome for pathways).
 
 ## Codex CLI settings requirements
 
@@ -72,9 +67,9 @@ Without these permissions, Codex will not be able to produce the final formatted
 
 ---
 
-### 2. Optional but recommended: web search for grounded references
+### 2. Required: web search for grounded references
 
-If you want summaries to include real, verifiable academic papers instead of relying only on model knowledge, enable the built in web search tool.
+Summaries require real, verifiable references. Enable the built in web search tool so the agent can use `web.run` to find and verify sources.
 
 Enable via one of the following:
 
@@ -118,8 +113,8 @@ For basic usage, enabling web search alone is sufficient.
 | Workspace write access | Codex CLI sandbox must allow workspace writes (run in a write enabled sandbox mode) | Creating summary files and directories |
 | Command execution | Codex CLI must allow running shell commands (approval policy must permit local command execution) | Running LaTeX compilation and cleanup |
 | LaTeX installation | `pdflatex` available on PATH (or TinyTeX path configured as per README Notes) | Building PDF outputs |
-| Web search tool | `~/.codex/config.toml` → `[features]` `web_search_request = true` (or run `codex --search`) | Finding real academic papers |
-| Full network access | `~/.codex/config.toml` → `[sandbox_workspace_write]` `network_access = true` | Downloading and parsing papers automatically |
+| Web search tool | `~/.codex/config.toml` -> `[features]` `web_search_request = true` (or run `codex --search`) | Finding and verifying references |
+| Full network access | `~/.codex/config.toml` -> `[sandbox_workspace_write]` `network_access = true` | Downloading and parsing papers automatically |
 
 
 If any of these settings are missing, parts of the workflow will fail or require manual intervention.

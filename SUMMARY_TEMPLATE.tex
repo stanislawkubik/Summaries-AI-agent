@@ -5,99 +5,170 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 
-\title{[[CONCEPT]]: Intuition, Formalism, and Further Study}
+% Compact, referenceable key-results map.
+\newenvironment{keyresultmap}{\begin{enumerate}}{\end{enumerate}}
+
+\title{[[CONCEPT]]}
 \author{}
 \date{}
 
 \begin{document}
 \maketitle
 
-\noindent\textbf{Prerequisite concepts:} [[PREREQUISITES_LINE]]
+\section*{Prerequisite concepts}
+% One line or a short list of prerequisites with specific focus areas.
+[[PREREQUISITES_LINE]]
 
-\section{General Idea}
-[[ONE_PARAGRAPH_OVERVIEW: what it is, why we care, and when it is used]]
+\section*{What you will learn}
+% 3--6 bullet learning objectives with action verbs.
+\begin{itemize}
+  \item [[LEARNING_OBJECTIVE_1]]
+  \item [[LEARNING_OBJECTIVE_2]]
+  \item [[LEARNING_OBJECTIVE_3]]
+\end{itemize}
+
+\section*{Notation and conventions}
+% Define every symbol exactly once; do not redefine later.
+\subsection*{Notation}
+% List symbols, shapes, and meanings; define all acronyms on first use.
+[[NOTATION_BLOCK]]
+
+\subsection*{Conventions}
+% Force explicit choices about data preprocessing, intercepts, and scaling.
+\begin{itemize}
+  \item Data shapes and symbol meanings: [[DATA_SHAPES_AND_MEANINGS]]
+  \item Centering and standardizing conventions: [[CENTERING_STANDARDIZATION]]
+  \item Intercept treatment: [[INTERCEPT_TREATMENT]]
+  \item Objective scaling conventions: [[SCALING_CONVENTIONS]]
+  \item Mapping to common library parameter names (if relevant): [[LIBRARY_PARAMETER_MAPPING]]
+\end{itemize}
+
+\section{Problem setup and motivation}
+% Describe the concrete problem, why it matters, and what fails without this concept.
+[[PROBLEM_AND_MOTIVATION]]
+
+\section{General idea}
+% One cohesive paragraph: what it is, why it works at a high level, and when it is used.
+[[GENERAL_IDEA]]
 
 \section{Intuition}
-[[INTUITIVE_EXPLANATION: deeper mechanism or geometry, not a generic summary]]
+% Provide at least two lenses chosen from: geometric view, spectral or decomposition view,
+% probabilistic or Bayesian view, optimization view, toy example, limiting cases.
+% Each lens must end with a one-sentence takeaway.
+\subsection*{Lens 1: [[INTUITION_LENS_1]]}
+[[INTUITION_TEXT_1]]
+\textbf{Takeaway:} [[TAKEAWAY_1]]
 
-\section{Formal Introduction}
-Let [[DEFINE_NOTATION]]. Then [[FORMAL_STATEMENT]].
+\subsection*{Lens 2: [[INTUITION_LENS_2]]}
+[[INTUITION_TEXT_2]]
+\textbf{Takeaway:} [[TAKEAWAY_2]]
+
+% Optional third lens if helpful.
+% \subsection*{Lens 3: [[INTUITION_LENS_3]]}
+% [[INTUITION_TEXT_3]]
+% \textbf{Takeaway:} [[TAKEAWAY_3]]
+
+\section{Formal definition}
+% Precisely define variables, assumptions, and conventions. Resolve scaling/standardization/intercept ambiguities.
+% Every equation must have an explanatory sentence stating what it means and why it is included.
+Let [[FORMAL_SYMBOL_DEFINITIONS]].
 \begin{equation}
+  \label{eq:core-1}
   [[EQUATION_1]]
 \end{equation}
-[[SHORT_EXPLANATION]]
+[[EQUATION_1_EXPLANATION]]
+
 \begin{equation}
+  \label{eq:core-2}
   [[EQUATION_2]]
 \end{equation}
-[[BIAS_VARIANCE_PARAGRAPH_IF_APPLICABLE]]
+[[EQUATION_2_EXPLANATION]]
 
-\subsection*{Training or Estimation}
-[[TRAINING_OR_ESTIMATION_DESCRIPTION]]
+% Add additional equations as needed, each with a clear explanation sentence.
 
-\section{Usage in Quantitative Finance (Systematic Strategies)}
-[[QUANT_PARAGRAPH_WITH_CITATIONS]] \cite{[[CITE_KEY_1]], [[CITE_KEY_2]]}
+\section{Key results map}
+% 3--7 results. Each item must point to where it is derived (section or appendix label).
+\begin{keyresultmap}
+  \item \textbf{[[RESULT_1_TITLE]]}\label{kr:result-1} [[RESULT_1_STATEMENT]] (Derived in Section~\ref{sec:result-1} or Appendix~\ref{app:result-1}.)
+  \item \textbf{[[RESULT_2_TITLE]]}\label{kr:result-2} [[RESULT_2_STATEMENT]] (Derived in Section~\ref{sec:result-2} or Appendix~\ref{app:result-2}.)
+  \item \textbf{[[RESULT_3_TITLE]]}\label{kr:result-3} [[RESULT_3_STATEMENT]] (Derived in Section~\ref{sec:result-3} or Appendix~\ref{app:result-3}.)
+\end{keyresultmap}
 
-\subsection*{Typical applications}
+\section{Estimation, tuning, and computation}
+% Describe estimation procedures, tuning choices, algorithmic complexity, and practical implementation tips.
+[[ESTIMATION_TUNING_COMPUTATION]]
+
+\section{Diagnostics and interpretation}
+% Explain how to check fit, validate assumptions, and interpret parameters or outputs.
+[[DIAGNOSTICS_AND_INTERPRETATION]]
+
+\section{Common confusions and failure modes}
+% Format each item as: symptom, cause, fix.
 \begin{itemize}
-  \item [[USE_CASE_1]] \cite{[[CITE_KEY_3]]}
-  \item [[USE_CASE_2]] \cite{[[CITE_KEY_4]]}
-  \item [[USE_CASE_3]] \cite{[[CITE_KEY_5]]}
+  \item \textbf{Symptom:} [[SYMPTOM_1]] \textbf{Cause:} [[CAUSE_1]] \textbf{Fix:} [[FIX_1]]
+  \item \textbf{Symptom:} [[SYMPTOM_2]] \textbf{Cause:} [[CAUSE_2]] \textbf{Fix:} [[FIX_2]]
 \end{itemize}
 
-\section{Further Reading and Next Topics}
-\subsection*{Suggested reads}
+\section{Connections and extensions}
+% Relate to adjacent concepts, generalizations, or alternative formulations.
+[[CONNECTIONS_AND_EXTENSIONS]]
+
+% Optional: include only if the user requests a domain or context.
+% \section{Applications}
+% [[APPLICATIONS_SECTION]]
+
+\section{Further reading}
+% Keep it tight; avoid long literature surveys unless requested.
+\subsection*{Foundational paper}
 \begin{itemize}
-  \item [[READING_1]]. \cite{[[READING_KEY_1]]}
-  \item [[READING_2]]. \cite{[[READING_KEY_2]]}
-  \item [[READING_3]]. \cite{[[READING_KEY_3]]}
+  \item [[FOUNDATIONAL_PAPER]] \cite{[[FOUNDATIONAL_KEY]]}
 \end{itemize}
 
-\subsection*{If you already know the basics, dig deeper into}
+\subsection*{Best notes or survey}
 \begin{itemize}
-  \item [[TOPIC_1]]. Why is this important? [[QUANT_REASON_1]].
-  \item [[TOPIC_2]]. Why is this important? [[QUANT_REASON_2]].
-  \item [[TOPIC_3]]. Why is this important? [[QUANT_REASON_3]].
+  \item [[BEST_NOTES]] \cite{[[NOTES_KEY]]}
+\end{itemize}
+
+\subsection*{Textbook}
+\begin{itemize}
+  \item [[TEXTBOOK_REF]] \cite{[[TEXTBOOK_KEY]]}
+\end{itemize}
+
+\subsection*{Implementation docs}
+\begin{itemize}
+  \item [[IMPLEMENTATION_DOCS]] \cite{[[IMPL_KEY]]}
 \end{itemize}
 
 \renewcommand{\refname}{Bibliography}
 \begin{thebibliography}{9}
-\bibitem{[[READING_KEY_1]]}
-[[BIB_ENTRY_1]]
+\bibitem{[[FOUNDATIONAL_KEY]]}
+[[FOUNDATIONAL_BIB]]
 
-\bibitem{[[READING_KEY_2]]}
-[[BIB_ENTRY_2]]
+\bibitem{[[NOTES_KEY]]}
+[[NOTES_BIB]]
 
-\bibitem{[[READING_KEY_3]]}
-[[BIB_ENTRY_3]]
+\bibitem{[[TEXTBOOK_KEY]]}
+[[TEXTBOOK_BIB]]
 
-\bibitem{[[CITE_KEY_1]]}
-[[BIB_ENTRY_4]]
-
-\bibitem{[[CITE_KEY_2]]}
-[[BIB_ENTRY_5]]
-
-\bibitem{[[CITE_KEY_3]]}
-[[BIB_ENTRY_6]]
-
-\bibitem{[[CITE_KEY_4]]}
-[[BIB_ENTRY_7]]
-
-\bibitem{[[CITE_KEY_5]]}
-[[BIB_ENTRY_8]]
+\bibitem{[[IMPL_KEY]]}
+[[IMPL_BIB]]
 \end{thebibliography}
 
 \appendix
 \section{Derivations}
-\subsection*{[[DERIVATION_TITLE_1]]}
+% Include every derivation needed for the key results map, with explicit labels.
+\subsection{[[DERIVATION_TITLE_1]]}\label{app:result-1}
 [[DERIVATION_TEXT_1]]
 \begin{align}
   [[DERIVATION_EQUATION_1]]
 \end{align}
 
-\subsection*{[[DERIVATION_TITLE_2]]}
+\subsection{[[DERIVATION_TITLE_2]]}\label{app:result-2}
 [[DERIVATION_TEXT_2]]
 \begin{align}
   [[DERIVATION_EQUATION_2]]
 \end{align}
+
+% Add more derivations as needed and ensure labels match the key results map.
 
 \end{document}
