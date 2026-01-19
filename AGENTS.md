@@ -12,7 +12,7 @@ Authoritative files
 - Template: `Summaries/SUMMARY_TEMPLATE.tex`
 
 Output location and naming
-- Create a new folder under `Summaries/Output/` named with Title_Case and underscores (example: `Summaries/Output/Mixture_of_experts`).
+- Create a new folder under `Output/` named with Title_Case and underscores (example: `Output/Mixture_of_experts`).
 - Inside it, write `<concept_name>.tex` using lowercase with underscores (example: `mixture_of_experts.tex`).
 - Render `<concept_name>.pdf` in the same folder.
 - Clean all LaTeX byproducts so only the `.tex` and `.pdf` remain.

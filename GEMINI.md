@@ -8,11 +8,11 @@ Role
 - Do not add extra reasoning or commentary in the user-facing response beyond what is needed to request scope/audience/focus.
 
 Authoritative files
-- Agent instructions: `Summaries/GEMINI_AGENT.md`
-- Template: `Summaries/SUMMARY_TEMPLATE.tex`
+- Agent instructions: `AGENTS.md`
+- Template: `SUMMARY_TEMPLATE.tex`
 
 Output location and naming
-- Create a new folder under `Summaries/Output/` named with Title_Case and underscores (example: `Summaries/Output/Mixture_of_experts`).
+- Create a new folder under `Output/` named with Title_Case and underscores (example: `Output/Mixture_of_experts`).
 - Inside it, write `<concept_name>.tex` using lowercase with underscores (example: `mixture_of_experts.tex`).
 - Render `<concept_name>.pdf` in the same folder.
 - Clean all LaTeX byproducts so only the `.tex` and `.pdf` remain.
@@ -64,12 +64,39 @@ Writing rules
 - All cited items must appear in the bibliography.
 
 References workflow
-- I will use my available tools to find references. I will prioritize academic search tools if available and fallback to general web search if needed.
+- I will attempt to use my available tools to find academic papers.
+- I will prioritize any available academic search tools first, then fall back to web search, and only then fall back to my own knowledge if web search is unavailable.
 
-Web search only workflow (fallback)
+Tool-first workflow (minimize irrelevant citations)
+- Query expansion: build 5 to 10 queries including the technique name, common aliases, and tutorial/survey/lecture notes/derivation plus key related terms.
+- Candidate retrieval:
+  - Use any available academic search tools to retrieve top candidates per query.
+- Canonicalize and deduplicate:
+  - Prefer DOI as the primary identifier; if no DOI, use arXiv id.
+  - Deduplicate across sources by DOI or arXiv id, otherwise normalized title + first author + year.
+- Verification gate:
+  - Include a paper in the bibliography only if it has a stable identifier (DOI or arXiv id).
+  - Any claim of the form "Paper X uses method Y" must be supported by an abstract that explicitly states it, or full text when available via my tools.
+  - If verification fails, do not cite as evidence; it may appear only in Further reading if the title is unambiguous and the identifier is stable.
+- Use web search as a second view:
+  - For the final short list, use web search to confirm title, authors, year, and identifier consistency and to find canonical landing pages.
+  - If web search contradicts my tool's metadata, I will prefer the tool's metadata for DOI; if still inconsistent, drop the paper.
+- Select by buckets, not raw ranking:
+  - Foundational/origin paper: 1.
+  - Modern tutorial or lecture notes: 1 to 2.
+  - Survey or broad reference: 0 to 1.
+  - Applied usage papers: 1 to 3 only if they pass the verification gate.
+  - Implementation documentation: 1.
+- Keep bibliography small: prefer 4 to 8 total citations and avoid extra citations that do not improve learning value.
+
+Web search fallback
 - Use web search for all discovery and verification.
 - Do not cite any paper unless it has a stable identifier (DOI or arXiv id).
 - Do not make claims about what a paper does unless the abstract or full text you opened explicitly supports it.
+
+Model-knowledge fallback (last resort)
+- Use my own knowledge only if web search is unavailable.
+- Keep claims high-level and avoid paper-specific assertions without verified identifiers.
 
 Bibliography discipline
 - Never invent DOI, arXiv id, year, venue, or authors.

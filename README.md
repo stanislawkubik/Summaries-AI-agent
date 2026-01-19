@@ -12,16 +12,16 @@ Quick start
 
 What the agent does
 - Asks clarifying questions only when needed to choose scope, audience level, or focus.
-- Creates a new concept folder under `Summaries/Output/` with Title_Case naming.
+- Creates a new concept folder under `Output/` with Title_Case naming.
 - Uses `SUMMARY_TEMPLATE.tex` to keep the exact section layout and front matter.
 - Writes intuition before formalism and includes a key results map with derivation pointers.
 - Includes an Applications section only if the user requests a domain or context.
 - Renders a PDF and removes all LaTeX byproducts, leaving only `.tex` and `.pdf`.
 
 File conventions
-- Folder: `Summaries/Output/<Concept_Name>/`
-- LaTeX: `Summaries/Output/<Concept_Name>/<concept_name>.tex`
-- PDF: `Summaries/Output/<Concept_Name>/<concept_name>.pdf`
+- Folder: `Output/<Concept_Name>/`
+- LaTeX: `Output/<Concept_Name>/<concept_name>.tex`
+- PDF: `Output/<Concept_Name>/<concept_name>.pdf`
 
 Notes
 - The template is at `Summaries/SUMMARY_TEMPLATE.tex`.
@@ -50,7 +50,7 @@ The following capabilities are mandatory for the agent to function as designed:
 
 - **Sandbox write access to the repository**
   - Codex must be able to create and modify files inside the current workspace.
-  - This is required to generate new directories under `Summaries/Output/`, create `.tex` files, and update existing summaries.
+  - This is required to generate new directories under `Output/`, create `.tex` files, and update existing summaries.
 
 - **Permission to execute local commands**
   - The agent needs to run build commands such as:
