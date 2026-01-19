@@ -1,7 +1,7 @@
 # Summaries Workflow
 This folder is set up for generating LaTeX teaching notes for technical concepts (math, statistics, ML, CS).
 
-* **IMPORTANT:** This project is a work in progress. Suggestions and pull requests are welcome.
+* **IMPORTANT:** This project is a work in progress. Suggestions are welcome at stanislaw.kubik@proton.me
 
 Quick start
 1. `cd ./Summaries`
