@@ -89,7 +89,17 @@ This allows the agent to discover relevant papers, arXiv links, and citations wh
 
 ### 3. Optional: MCP scholarly search servers
 
-If you have MCP servers configured for Semantic Scholar, Crossref, and arXiv, the agent can use them alongside web search to improve discovery, metadata accuracy, and relevance filtering. These MCP servers are optional. If any are unavailable, the agent automatically falls back to web search only.
+If you have MCP servers configured for Academic Search, Semantic Scholar, Crossref, and arXiv, the agent will prioritize any MCP servers that are available to improve discovery, metadata accuracy, and relevance filtering. MCP servers are optional; the agent falls back to web search (web.run) when a needed MCP server is unavailable, and only falls back to model knowledge if web search is unavailable.
+
+To enable MCP servers in Codex settings:
+- Install `uv` and `uvx` (required to run many MCP server packages).
+- Add MCP server entries to your Codex config (`~/.codex/config.toml`) following each server's install instructions, then restart Codex.
+- The agent will probe MCP availability at runtime and use whatever MCP servers are available.
+
+Configuring MCP servers in `config.toml` (short version)
+- Open `~/.codex/config.toml`.
+- Add MCP server blocks for Academic Search, Semantic Scholar, Crossref, and arXiv using each server's documented config fields (typically a server name and a launch command, often via `uvx`).
+- Save the file and restart Codex.
 
 ---
 
@@ -120,7 +130,7 @@ For basic usage, enabling web search alone is sufficient.
 | Command execution | Codex CLI must allow running shell commands (approval policy must permit local command execution) | Running LaTeX compilation and cleanup |
 | LaTeX installation | `pdflatex` available on PATH (or TinyTeX path configured as per README Notes) | Building PDF outputs |
 | Web search tool | `~/.codex/config.toml` -> `[features]` `web_search_request = true` (or run `codex --search`) | Finding and verifying references |
-| MCP scholarly search servers (optional) | Configure MCP servers for Semantic Scholar, Crossref, and arXiv | Higher-quality paper discovery and metadata; otherwise fallback to web search |
+| MCP scholarly search servers (optional) | Configure MCP servers for Academic Search, Semantic Scholar, Crossref, and arXiv | Prioritized scholarly search and metadata; falls back to web search if MCP is unavailable |
 | Full network access | `~/.codex/config.toml` -> `[sandbox_workspace_write]` `network_access = true` | Downloading and parsing papers automatically |
 
 
